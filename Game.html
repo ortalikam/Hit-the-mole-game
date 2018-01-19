@@ -1,0 +1,171 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>הכה את החפרפרת</title>
+    <style>
+        img {
+            width: 45px;
+            height: 45px;
+        }
+
+
+        #status {
+            height: 50px;
+            width: 200px;
+            background-color: white;
+        }
+
+        div {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: black;
+        }
+
+        table {
+            background-color: green;
+        }
+
+    </style>
+    <script>
+        var good = 0;
+        var bad = 0;
+        var arr = [3, 5, 10];
+        var level;
+        var y;// place of hafarferet
+        var img;
+        var txt; //image of hafarferet
+        var updateBad = 0;
+        var s; // status lable
+        var stopHaf, stopReset; // when switch between levels reser the functions
+        var circle;
+
+        function boom() { //when push on hafarferet
+            img.src = "Capture2.JPG";
+            y.removeChild(y.firstElementChild);
+            y.appendChild(img);
+            good++;
+            updateStatus();
+            updateBad = 0;
+
+        }
+
+        function gameOver()
+        {
+            alert("Game Over!");
+            location.reload();
+        }
+
+        function reset() {
+
+            y.removeChild(y.firstElementChild);
+            circle = document.createElement("div"); 
+            y.appendChild(circle); // replace hafarferet by circle
+
+            if (updateBad == 1) {    
+                bad++;
+                updateStatus();
+                s.removeChild(s.lastElementChild); // remove one heart
+            }
+
+            if (bad == 3) { setTimeout(gameOver, 200);  }
+
+            
+
+            stopHaf = setTimeout(hafarferet, 1000 * (0.25 + Math.random() / (4 / 3)));
+        }
+
+
+        function hafarferet() { // show hafarferet
+
+            updateBad = 1;
+            var rand = Math.round((arr[level] * arr[level] - 1) * Math.random());
+            img.src = "Capture.JPG";
+            y = document.getElementById(rand); //find the td
+            y.removeChild(y.firstElementChild);
+            y.appendChild(img);
+
+            stopReset = setTimeout(reset, 1000 * (1 + 0.5 * Math.random()));
+        }
+
+        function updateStatus() {
+            txt.innerHTML = "הצלחות:  " + good + "   פסילות:  " + bad;
+        }
+
+        function play() {
+
+            good = bad = 0;
+            clearTimeout(stopHaf);
+            clearTimeout(stopReset);
+            var c = document.getElementsByTagName("select");
+            for (var i = 0, len = c.length ; i < len; i++) {
+                level = c[i].selectedIndex - 1;
+                gameBoard(arr[level]);
+
+            }
+
+            img = document.createElement("img");
+            img.onclick = boom;
+
+            s = document.getElementById("status");
+            var fc = s.firstChild;
+
+            while (fc) {
+                s.removeChild(fc);
+                fc = s.firstChild;
+            }
+            txt = document.createElement("h4");
+           s.appendChild(txt);
+            updateStatus();
+
+            for (var j = 0; j < (3 - bad) ; j++) {
+                var life_img = document.createElement("img");
+                life_img.src = "heart.png";
+                s.appendChild(life_img);
+            }
+
+            stopHaf = setTimeout(hafarferet, 2000);
+
+        }
+        function gameBoard(x) {
+            var idd = 0;
+            var tbl = document.getElementById("tbl");
+            tbl.innerHTML = "";
+            for (var i = 0; i < x; i++) {
+                var tr = document.createElement("tr");
+                for (var j = 0; j < x; j++) {
+                    var td = document.createElement("td");
+                    td.id = idd++;
+                    var c = document.createElement("div");
+                    td.appendChild(c);
+                    tr.appendChild(td);
+
+                }
+                tbl.appendChild(tr);
+            }
+
+
+
+
+
+        }
+
+
+    </script>
+</head>
+<body dir="rtl">
+
+    <select>
+        <option>בחר רמה</option>
+        <option>קל</option>
+        <option>בינוני</option>
+        <option>קשה</option>
+    </select>
+    <input type="button" value="start game" onclick="play()" />
+
+
+    <div id="status"></div>
+    <table id="tbl" align="center"></table>
+
+</body>
+</html>
